@@ -1,0 +1,53 @@
+import telebot
+from telebot import types
+
+bot = telebot.TeleBot('8184685660:AAEYv-kLHYkI5rp_VDP6_EfRLViSOTaWeI0')
+
+
+vehicles = {
+    "Chevrolet CK1500": "Лёгкий пикап, хорош для начальных заданий",
+    "GMC MH9500": "Универсальный грузовик для средних грузов",
+    "Pacific P16": "Мощный тягач для особо тяжёлых грузов",
+    "Tayga 6436": "Внедорожник с отличной проходимостью",
+    "Azov 64131": "Один из лучших грузовиков в игре"
+}
+
+locations = {
+    "Michigan": "Первый регион с лесами и грязными дорогами",
+    "Alaska": "Снег и лёд, нужны шипы для колёс",
+    "Taymyr": "Российская локация с болотами и бездорожьем",
+    "Kola Peninsula": "Экстремально холодный регион",
+    "Yukon": "Горные перевалы и глубокие реки"
+}
+
+
+
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    btn1 = types.KeyboardButton('🚛 Показать все машины')
+    btn2 = types.KeyboardButton('🗺️ Показать все локации')
+    markup.add(btn1, btn2)
+
+    bot.send_message(message.chat.id,
+                     "Привет! Я бот про SnowRunner. Что тебя интересует?",
+                     reply_markup=markup)
+
+
+@bot.message_handler(func=lambda message: True)
+def handle_message(message):
+    if message.text == '🚛 Показать все машины':
+        response = "🚛 <b>Машины в SnowRunner:</b>\n\n"
+        for vehicle, desc in vehicles.items():
+            response += f"<b>{vehicle}</b>: {desc}\n\n"
+        bot.send_message(message.chat.id, response, parse_mode='HTML')
+
+    elif message.text == '🗺️ Показать все локации':
+        response = "🗺️ <b>Локации в SnowRunner:</b>\n\n"
+        for loc, desc in locations.items():
+            response += f"<b>{loc}</b>: {desc}\n\n"
+        bot.send_message(message.chat.id, response, parse_mode='HTML')
+
+
+
+bot.polling()
